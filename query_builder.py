@@ -122,13 +122,16 @@ if __name__ == '__main__':
                 stories[p.uid].add_page(p.url, p.title, p.page_type, p.metrics)
         story_order = [v for k, v in stories.items()]
         story_order_sorted = sorted(story_order, key=attrgetter('pageviews'), reverse=True)
-        outfile_name_string = str(start_day) + str(end_day) + ".txt"
+        outfile_name_string = str(start_day) + str(end_day) + ".csv"
         articles = open(outfile_name_string, 'w')
         for story in story_order_sorted:
             f = attrgetter("titles")
             a = f(story)
             print(a)
-            articles.write("{0!s}, {1!s}, {2!s}, {3!s}".format(story.titles, story.pageviews, story.uniques, story.seconds))
+            slugs = [s[0].strip().replace(",", "") for s in story.titles]
+            print(slugs)
+            slugs = ";".join(slugs)
+            articles.write("{0!s}, {1!s}, {2!s}, {3!s}, {4!s}".format(slugs, story.pageviews, story.uniques, story.seconds, story.urls))
             articles.write('\n')
         articles.close()
 
@@ -148,13 +151,14 @@ if __name__ == '__main__':
 
     ga_reporting = GAConnection(KEY_FILE_LOCATION, SCOPES)
 
-    today = articleQuery(ga_reporting, YHR_VIEW_ID, "today", "today")
-    yesterday = articleQuery(ga_reporting, YHR_VIEW_ID, "yesterday", "yesterday")
-
-    print(today)
-    print(yesterday)
-    print(totalQuery(ga_reporting,YHR_VIEW_ID,"today","today"))
-    print(totalQuery(ga_reporting,YHR_VIEW_ID,"yesterday","yesterday"))
+    #weekend = articleQuery(ga_reporting, YHR_VIEW_ID, "2018-12-28", "2018-12-30")
+    #today = articleQuery(ga_reporting, YHR_VIEW_ID, "today", "today")
+    all2018 = articleQuery(ga_reporting, YHR_VIEW_ID, "2018-01-01", "2018-12-30")
+    #yesterday = articleQuery(ga_reporting, YHR_VIEW_ID, "yesterday", "yesterday")
+    #print(today)
+    #print(yesterday)
+    #print(totalQuery(ga_reporting,YHR_VIEW_ID,"today","today"))
+    #print(totalQuery(ga_reporting,YHR_VIEW_ID,"2018-12-28","2018-12-30"))
     
 
 
